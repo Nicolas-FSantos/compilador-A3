@@ -15,19 +15,8 @@ grammar coffe;
 
 prog: 'inicio' declaracao bloco 'fim';
 
-declaracao:    (
-                tipo
-                ID { novaVariavel = new Variavel($ID.text, tipo, escopo);
-                     boolean declarado = cv.adiciona(novaVariavel);
-					 if(!declarado){
-					    System.err.println("Variavel "+$ID.text+" ja foi declarada!!!");
-					    System.exit(0);
-					 }
-					 codigoJava += $ID.text;
-				   }
-		        PV {codigoJava += ";\n";}
-		    )*
-       ;
+declaracao:    (tipo ID PV)*
+    ;
 
 tipo:   (
             'natural'|
@@ -42,7 +31,8 @@ bloco:    (comando)+
 comando:   ler |
 		   escrever |
 		   condicional |
-		   repeticao |
+		   repetfor |
+		   repetwhile |
 		   atribuicao
    ;
 
@@ -50,6 +40,45 @@ ler:   'leia' ABREP ID FP PV
    ;
 
 escrever:   'escreva' ABREP (ID | STRING) FP PV
+   ;
+
+condicional:   'se' ABREP comp FP AC bloco FC
+
+		('senao' AC bloco FC )?
+   ;
+
+comp:   (ID | NUM | DEC) OPREL (ID | NUM | DEC)
+   ;
+
+repetfor:  'para' ABREP atribuicao PV comp PV atribuicao FP AC bloco FC
+
+   ;
+
+repetwhile:  'enquanto' ABREP comp FP AC bloco FC
+   ;
+
+atribuicao:  ID Op_atrib (ID | NUM | DEC) PV
+
+		{	
+			nome = $ID.text;
+			if(!cv.jaExiste(nome)){
+				System.err.println("A variavel "+nome+" nao foi declarada");
+				System.exit(0);
+			}
+			else{
+				escopo = cv.getEscopo(nome);
+				tipo = cv.getTipo(nome);
+				if(tipo == 1){
+					codigoJava += "int "+nome+" = "+$ID.text+";\n";
+				}
+				else if(tipo == 2){
+					codigoJava += "String "+nome+" = "+$ID.text+";\n";
+				}
+				else if(tipo == 3){
+					codigoJava += "double "+nome+" = "+$ID.text+";\n";
+				}
+			}
+		}
    ;
 
 
