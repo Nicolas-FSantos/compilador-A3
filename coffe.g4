@@ -13,21 +13,9 @@ grammar coffe;
 	String nome;
 }
 
-vai:    { escopo = 0;
-		  codigoJava += "public class Codigo{\n\t";
-		}
-		declvar
-		'inicio' { 	escopo = 1;
-					codigoJava += "public static void main(String args[]){\n\t\t"; 
-				 }
-		declvar
-		cmd
-	    'fim' {codigoJava += "\t}\n}";
-			   System.out.println(codigoJava);
-			  }
-   ;
+prog: 'inicio' declaracao bloco 'fim';
 
-declvar:    (
+declaracao:    (
                 tipo
                 ID { novaVariavel = new Variavel($ID.text, tipo, escopo);
                      boolean declarado = cv.adiciona(novaVariavel);
@@ -42,36 +30,52 @@ declvar:    (
        ;
 
 tipo:   (
-            'natural'   {	tipo = 0;
-							codigoJava += "int ";
-						} |
-            'texto'     {	tipo = 1;
-							codigoJava += "String ";
-						} |
-            'decimal'   {   tipo = 2;
-                            codigoJava += "float ";
-                        }
+            'natural'|
+            'texto'|
+            'decimal'   
         )
    ;
 
-cmd:    (cond |atrib)*
+bloco:    (comando)+
    ;
 
-cond:   'se' AP comp FP AC cmd FC
-		('senao' AC cmd FC )?
-	;
+comando:   ler |
+		   escrever |
+		   condicional |
+		   repeticao |
+		   atribuicao
+   ;
 
-comp:   (ID | NUM) OPREL (ID | NUM)
-    ;
+ler:   'leia' ABREP ID FP PV
+   ;
 
-atrib:  ID {	boolean resultado = cv.jaExiste($ID.text);
-				if(!resultado){
-					System.err.println("A variavel "+$ID.text+" nao foi declarada");
-					System.exit(0);
-				}
-			}
-		PV
-     ;
+escrever:   'escreva' ABREP (ID | STRING) FP PV
+   ;
+
+
+
+
+
+
+
+// cond:   'se' ABREP comp FP AC bloco FC
+// 		('senao' AC bloco FC )?
+// 	;
+
+// comp:   (ID | NUM) OPREL (ID | NUM)
+//     ;
+
+// repet:  'enquanto' ABREP comp FP AC bloco FC
+// 	;
+	
+// atrib:  ID {	boolean resultado = cv.jaExiste($ID.text);
+// 				if(!resultado){
+// 					System.err.println("A variavel "+$ID.text+" nao foi declarada");
+// 					System.exit(0);
+// 				}
+// 			}
+// 		PV
+//      ;
 
 ID: [A-Za-z]+;
 NUM: [0-9]+;
@@ -85,7 +89,7 @@ DIV: '/' ;
 PV: ';' ;
 AC: '{' ;
 FC: '}' ;
-AP: '(' ;
+ABREP: '(' ;
 FP: ')' ;
 Op_atrib: '=';
 WS: [ \t\r\n]+ -> skip;

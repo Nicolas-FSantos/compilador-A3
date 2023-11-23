@@ -1,4 +1,4 @@
-// Generated from c:/Users/Nicolas Ferreira/Documents/antlr/Trabalho/coffe.g4 by ANTLR 4.13.1
+// Generated from c:/Users/Nicolas Ferreira/Documents/antlr/compilador-A3/coffe.g4 by ANTLR 4.13.1
 
     import java.util.*;
 
@@ -19,15 +19,15 @@ public class coffeParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, ID=8, NUM=9, DEC=10, 
-		STRING=11, OPREL=12, SOMA=13, SUB=14, MULT=15, DIV=16, PV=17, AC=18, FC=19, 
-		AP=20, FP=21, Op_atrib=22, WS=23;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, ID=9, 
+		NUM=10, DEC=11, STRING=12, OPREL=13, SOMA=14, SUB=15, MULT=16, DIV=17, 
+		PV=18, AC=19, FC=20, ABREP=21, FP=22, Op_atrib=23, WS=24;
 	public static final int
-		RULE_vai = 0, RULE_declvar = 1, RULE_tipo = 2, RULE_cmd = 3, RULE_cond = 4, 
-		RULE_comp = 5, RULE_atrib = 6;
+		RULE_prog = 0, RULE_declaracao = 1, RULE_tipo = 2, RULE_bloco = 3, RULE_cond = 4, 
+		RULE_comp = 5, RULE_repet = 6, RULE_atrib = 7;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"vai", "declvar", "tipo", "cmd", "cond", "comp", "atrib"
+			"prog", "declaracao", "tipo", "bloco", "cond", "comp", "repet", "atrib"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -35,16 +35,16 @@ public class coffeParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'inicio'", "'fim'", "'natural'", "'texto'", "'decimal'", "'se'", 
-			"'senao'", null, null, null, null, null, "'+'", "'-'", "'*'", "'/'", 
-			"';'", "'{'", "'}'", "'('", "')'", "'='"
+			"'senao'", "'enquanto'", null, null, null, null, null, "'+'", "'-'", 
+			"'*'", "'/'", "';'", "'{'", "'}'", "'('", "')'", "'='"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, null, null, "ID", "NUM", "DEC", "STRING", 
-			"OPREL", "SOMA", "SUB", "MULT", "DIV", "PV", "AC", "FC", "AP", "FP", 
-			"Op_atrib", "WS"
+			null, null, null, null, null, null, null, null, null, "ID", "NUM", "DEC", 
+			"STRING", "OPREL", "SOMA", "SUB", "MULT", "DIV", "PV", "AC", "FC", "ABREP", 
+			"FP", "Op_atrib", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -107,47 +107,33 @@ public class coffeParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class VaiContext extends ParserRuleContext {
-		public List<DeclvarContext> declvar() {
-			return getRuleContexts(DeclvarContext.class);
+	public static class ProgContext extends ParserRuleContext {
+		public DeclaracaoContext declaracao() {
+			return getRuleContext(DeclaracaoContext.class,0);
 		}
-		public DeclvarContext declvar(int i) {
-			return getRuleContext(DeclvarContext.class,i);
+		public BlocoContext bloco() {
+			return getRuleContext(BlocoContext.class,0);
 		}
-		public CmdContext cmd() {
-			return getRuleContext(CmdContext.class,0);
-		}
-		public VaiContext(ParserRuleContext parent, int invokingState) {
+		public ProgContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_vai; }
+		@Override public int getRuleIndex() { return RULE_prog; }
 	}
 
-	public final VaiContext vai() throws RecognitionException {
-		VaiContext _localctx = new VaiContext(_ctx, getState());
-		enterRule(_localctx, 0, RULE_vai);
+	public final ProgContext prog() throws RecognitionException {
+		ProgContext _localctx = new ProgContext(_ctx, getState());
+		enterRule(_localctx, 0, RULE_prog);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			 escopo = 0;
-					  codigoJava += "public class Codigo{\n\t";
-					
-			setState(15);
-			declvar();
 			setState(16);
 			match(T__0);
-			 	escopo = 1;
-								codigoJava += "public static void main(String args[]){\n\t\t"; 
-							 
+			setState(17);
+			declaracao();
 			setState(18);
-			declvar();
+			bloco();
 			setState(19);
-			cmd();
-			setState(20);
 			match(T__1);
-			codigoJava += "\t}\n}";
-						   System.out.println(codigoJava);
-						  
 			}
 		}
 		catch (RecognitionException re) {
@@ -162,7 +148,7 @@ public class coffeParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class DeclvarContext extends ParserRuleContext {
+	public static class DeclaracaoContext extends ParserRuleContext {
 		public Token ID;
 		public List<TipoContext> tipo() {
 			return getRuleContexts(TipoContext.class);
@@ -178,43 +164,43 @@ public class coffeParser extends Parser {
 		public TerminalNode PV(int i) {
 			return getToken(coffeParser.PV, i);
 		}
-		public DeclvarContext(ParserRuleContext parent, int invokingState) {
+		public DeclaracaoContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_declvar; }
+		@Override public int getRuleIndex() { return RULE_declaracao; }
 	}
 
-	public final DeclvarContext declvar() throws RecognitionException {
-		DeclvarContext _localctx = new DeclvarContext(_ctx, getState());
-		enterRule(_localctx, 2, RULE_declvar);
+	public final DeclaracaoContext declaracao() throws RecognitionException {
+		DeclaracaoContext _localctx = new DeclaracaoContext(_ctx, getState());
+		enterRule(_localctx, 2, RULE_declaracao);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(31);
+			setState(29);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 56L) != 0)) {
 				{
 				{
-				setState(23);
+				setState(21);
 				tipo();
-				setState(24);
-				((DeclvarContext)_localctx).ID = match(ID);
-				 novaVariavel = new Variavel((((DeclvarContext)_localctx).ID!=null?((DeclvarContext)_localctx).ID.getText():null), tipo, escopo);
+				setState(22);
+				((DeclaracaoContext)_localctx).ID = match(ID);
+				 novaVariavel = new Variavel((((DeclaracaoContext)_localctx).ID!=null?((DeclaracaoContext)_localctx).ID.getText():null), tipo, escopo);
 				                     boolean declarado = cv.adiciona(novaVariavel);
 									 if(!declarado){
-									    System.err.println("Variavel "+(((DeclvarContext)_localctx).ID!=null?((DeclvarContext)_localctx).ID.getText():null)+" ja foi declarada!!!");
+									    System.err.println("Variavel "+(((DeclaracaoContext)_localctx).ID!=null?((DeclaracaoContext)_localctx).ID.getText():null)+" ja foi declarada!!!");
 									    System.exit(0);
 									 }
-									 codigoJava += (((DeclvarContext)_localctx).ID!=null?((DeclvarContext)_localctx).ID.getText():null);
+									 codigoJava += (((DeclaracaoContext)_localctx).ID!=null?((DeclaracaoContext)_localctx).ID.getText():null);
 								   
-				setState(26);
+				setState(24);
 				match(PV);
 				codigoJava += ";\n";
 				}
 				}
-				setState(33);
+				setState(31);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -245,12 +231,12 @@ public class coffeParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(40);
+			setState(38);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__2:
 				{
-				setState(34);
+				setState(32);
 				match(T__2);
 					tipo = 0;
 											codigoJava += "int ";
@@ -259,7 +245,7 @@ public class coffeParser extends Parser {
 				break;
 			case T__3:
 				{
-				setState(36);
+				setState(34);
 				match(T__3);
 					tipo = 1;
 											codigoJava += "String ";
@@ -268,7 +254,7 @@ public class coffeParser extends Parser {
 				break;
 			case T__4:
 				{
-				setState(38);
+				setState(36);
 				match(T__4);
 				   tipo = 2;
 				                            codigoJava += "float ";
@@ -292,7 +278,7 @@ public class coffeParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class CmdContext extends ParserRuleContext {
+	public static class BlocoContext extends ParserRuleContext {
 		public List<CondContext> cond() {
 			return getRuleContexts(CondContext.class);
 		}
@@ -305,36 +291,36 @@ public class coffeParser extends Parser {
 		public AtribContext atrib(int i) {
 			return getRuleContext(AtribContext.class,i);
 		}
-		public CmdContext(ParserRuleContext parent, int invokingState) {
+		public BlocoContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_cmd; }
+		@Override public int getRuleIndex() { return RULE_bloco; }
 	}
 
-	public final CmdContext cmd() throws RecognitionException {
-		CmdContext _localctx = new CmdContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_cmd);
+	public final BlocoContext bloco() throws RecognitionException {
+		BlocoContext _localctx = new BlocoContext(_ctx, getState());
+		enterRule(_localctx, 6, RULE_bloco);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(46);
+			setState(44);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__5 || _la==ID) {
 				{
-				setState(44);
+				setState(42);
 				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case T__5:
 					{
-					setState(42);
+					setState(40);
 					cond();
 					}
 					break;
 				case ID:
 					{
-					setState(43);
+					setState(41);
 					atrib();
 					}
 					break;
@@ -342,7 +328,7 @@ public class coffeParser extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				setState(48);
+				setState(46);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -361,7 +347,7 @@ public class coffeParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class CondContext extends ParserRuleContext {
-		public TerminalNode AP() { return getToken(coffeParser.AP, 0); }
+		public TerminalNode ABREP() { return getToken(coffeParser.ABREP, 0); }
 		public CompContext comp() {
 			return getRuleContext(CompContext.class,0);
 		}
@@ -370,11 +356,11 @@ public class coffeParser extends Parser {
 		public TerminalNode AC(int i) {
 			return getToken(coffeParser.AC, i);
 		}
-		public List<CmdContext> cmd() {
-			return getRuleContexts(CmdContext.class);
+		public List<BlocoContext> bloco() {
+			return getRuleContexts(BlocoContext.class);
 		}
-		public CmdContext cmd(int i) {
-			return getRuleContext(CmdContext.class,i);
+		public BlocoContext bloco(int i) {
+			return getRuleContext(BlocoContext.class,i);
 		}
 		public List<TerminalNode> FC() { return getTokens(coffeParser.FC); }
 		public TerminalNode FC(int i) {
@@ -393,32 +379,32 @@ public class coffeParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(49);
+			setState(47);
 			match(T__5);
-			setState(50);
-			match(AP);
-			setState(51);
+			setState(48);
+			match(ABREP);
+			setState(49);
 			comp();
-			setState(52);
+			setState(50);
 			match(FP);
-			setState(53);
+			setState(51);
 			match(AC);
-			setState(54);
-			cmd();
-			setState(55);
+			setState(52);
+			bloco();
+			setState(53);
 			match(FC);
-			setState(61);
+			setState(59);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__6) {
 				{
-				setState(56);
+				setState(54);
 				match(T__6);
-				setState(57);
+				setState(55);
 				match(AC);
-				setState(58);
-				cmd();
-				setState(59);
+				setState(56);
+				bloco();
+				setState(57);
 				match(FC);
 				}
 			}
@@ -460,6 +446,18 @@ public class coffeParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
+			setState(61);
+			_la = _input.LA(1);
+			if ( !(_la==ID || _la==NUM) ) {
+			_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			setState(62);
+			match(OPREL);
 			setState(63);
 			_la = _input.LA(1);
 			if ( !(_la==ID || _la==NUM) ) {
@@ -470,18 +468,57 @@ public class coffeParser extends Parser {
 				_errHandler.reportMatch(this);
 				consume();
 			}
-			setState(64);
-			match(OPREL);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	@SuppressWarnings("CheckReturnValue")
+	public static class RepetContext extends ParserRuleContext {
+		public TerminalNode ABREP() { return getToken(coffeParser.ABREP, 0); }
+		public CompContext comp() {
+			return getRuleContext(CompContext.class,0);
+		}
+		public TerminalNode FP() { return getToken(coffeParser.FP, 0); }
+		public TerminalNode AC() { return getToken(coffeParser.AC, 0); }
+		public BlocoContext bloco() {
+			return getRuleContext(BlocoContext.class,0);
+		}
+		public TerminalNode FC() { return getToken(coffeParser.FC, 0); }
+		public RepetContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_repet; }
+	}
+
+	public final RepetContext repet() throws RecognitionException {
+		RepetContext _localctx = new RepetContext(_ctx, getState());
+		enterRule(_localctx, 12, RULE_repet);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
 			setState(65);
-			_la = _input.LA(1);
-			if ( !(_la==ID || _la==NUM) ) {
-			_errHandler.recoverInline(this);
-			}
-			else {
-				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-				_errHandler.reportMatch(this);
-				consume();
-			}
+			match(T__7);
+			setState(66);
+			match(ABREP);
+			setState(67);
+			comp();
+			setState(68);
+			match(FP);
+			setState(69);
+			match(AC);
+			setState(70);
+			bloco();
+			setState(71);
+			match(FC);
 			}
 		}
 		catch (RecognitionException re) {
@@ -508,11 +545,11 @@ public class coffeParser extends Parser {
 
 	public final AtribContext atrib() throws RecognitionException {
 		AtribContext _localctx = new AtribContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_atrib);
+		enterRule(_localctx, 14, RULE_atrib);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(67);
+			setState(73);
 			((AtribContext)_localctx).ID = match(ID);
 				boolean resultado = cv.jaExiste((((AtribContext)_localctx).ID!=null?((AtribContext)_localctx).ID.getText():null));
 							if(!resultado){
@@ -520,7 +557,7 @@ public class coffeParser extends Parser {
 								System.exit(0);
 							}
 						
-			setState(69);
+			setState(75);
 			match(PV);
 			}
 		}
@@ -536,49 +573,51 @@ public class coffeParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u0017H\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001\u0018N\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
-		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0001\u0000\u0001\u0000\u0001"+
-		"\u0000\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000\u0001"+
-		"\u0000\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001"+
-		"\u0001\u0005\u0001\u001e\b\u0001\n\u0001\f\u0001!\t\u0001\u0001\u0002"+
-		"\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0003\u0002"+
-		")\b\u0002\u0001\u0003\u0001\u0003\u0005\u0003-\b\u0003\n\u0003\f\u0003"+
-		"0\t\u0003\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004"+
+		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0001"+
+		"\u0000\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0001\u0001"+
+		"\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0005\u0001\u001c"+
+		"\b\u0001\n\u0001\f\u0001\u001f\t\u0001\u0001\u0002\u0001\u0002\u0001\u0002"+
+		"\u0001\u0002\u0001\u0002\u0001\u0002\u0003\u0002\'\b\u0002\u0001\u0003"+
+		"\u0001\u0003\u0005\u0003+\b\u0003\n\u0003\f\u0003.\t\u0003\u0001\u0004"+
 		"\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004"+
-		"\u0001\u0004\u0003\u0004>\b\u0004\u0001\u0005\u0001\u0005\u0001\u0005"+
-		"\u0001\u0005\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0006"+
-		"\u0000\u0000\u0007\u0000\u0002\u0004\u0006\b\n\f\u0000\u0001\u0001\u0000"+
-		"\b\tF\u0000\u000e\u0001\u0000\u0000\u0000\u0002\u001f\u0001\u0000\u0000"+
-		"\u0000\u0004(\u0001\u0000\u0000\u0000\u0006.\u0001\u0000\u0000\u0000\b"+
-		"1\u0001\u0000\u0000\u0000\n?\u0001\u0000\u0000\u0000\fC\u0001\u0000\u0000"+
-		"\u0000\u000e\u000f\u0006\u0000\uffff\uffff\u0000\u000f\u0010\u0003\u0002"+
-		"\u0001\u0000\u0010\u0011\u0005\u0001\u0000\u0000\u0011\u0012\u0006\u0000"+
-		"\uffff\uffff\u0000\u0012\u0013\u0003\u0002\u0001\u0000\u0013\u0014\u0003"+
-		"\u0006\u0003\u0000\u0014\u0015\u0005\u0002\u0000\u0000\u0015\u0016\u0006"+
-		"\u0000\uffff\uffff\u0000\u0016\u0001\u0001\u0000\u0000\u0000\u0017\u0018"+
-		"\u0003\u0004\u0002\u0000\u0018\u0019\u0005\b\u0000\u0000\u0019\u001a\u0006"+
-		"\u0001\uffff\uffff\u0000\u001a\u001b\u0005\u0011\u0000\u0000\u001b\u001c"+
-		"\u0006\u0001\uffff\uffff\u0000\u001c\u001e\u0001\u0000\u0000\u0000\u001d"+
-		"\u0017\u0001\u0000\u0000\u0000\u001e!\u0001\u0000\u0000\u0000\u001f\u001d"+
-		"\u0001\u0000\u0000\u0000\u001f \u0001\u0000\u0000\u0000 \u0003\u0001\u0000"+
-		"\u0000\u0000!\u001f\u0001\u0000\u0000\u0000\"#\u0005\u0003\u0000\u0000"+
-		"#)\u0006\u0002\uffff\uffff\u0000$%\u0005\u0004\u0000\u0000%)\u0006\u0002"+
-		"\uffff\uffff\u0000&\'\u0005\u0005\u0000\u0000\')\u0006\u0002\uffff\uffff"+
-		"\u0000(\"\u0001\u0000\u0000\u0000($\u0001\u0000\u0000\u0000(&\u0001\u0000"+
-		"\u0000\u0000)\u0005\u0001\u0000\u0000\u0000*-\u0003\b\u0004\u0000+-\u0003"+
-		"\f\u0006\u0000,*\u0001\u0000\u0000\u0000,+\u0001\u0000\u0000\u0000-0\u0001"+
-		"\u0000\u0000\u0000.,\u0001\u0000\u0000\u0000./\u0001\u0000\u0000\u0000"+
-		"/\u0007\u0001\u0000\u0000\u00000.\u0001\u0000\u0000\u000012\u0005\u0006"+
-		"\u0000\u000023\u0005\u0014\u0000\u000034\u0003\n\u0005\u000045\u0005\u0015"+
-		"\u0000\u000056\u0005\u0012\u0000\u000067\u0003\u0006\u0003\u00007=\u0005"+
-		"\u0013\u0000\u000089\u0005\u0007\u0000\u00009:\u0005\u0012\u0000\u0000"+
-		":;\u0003\u0006\u0003\u0000;<\u0005\u0013\u0000\u0000<>\u0001\u0000\u0000"+
-		"\u0000=8\u0001\u0000\u0000\u0000=>\u0001\u0000\u0000\u0000>\t\u0001\u0000"+
-		"\u0000\u0000?@\u0007\u0000\u0000\u0000@A\u0005\f\u0000\u0000AB\u0007\u0000"+
-		"\u0000\u0000B\u000b\u0001\u0000\u0000\u0000CD\u0005\b\u0000\u0000DE\u0006"+
-		"\u0006\uffff\uffff\u0000EF\u0005\u0011\u0000\u0000F\r\u0001\u0000\u0000"+
-		"\u0000\u0005\u001f(,.=";
+		"\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004\u0003\u0004"+
+		"<\b\u0004\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u0006"+
+		"\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0006"+
+		"\u0001\u0006\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007"+
+		"\u0000\u0000\b\u0000\u0002\u0004\u0006\b\n\f\u000e\u0000\u0001\u0001\u0000"+
+		"\t\nK\u0000\u0010\u0001\u0000\u0000\u0000\u0002\u001d\u0001\u0000\u0000"+
+		"\u0000\u0004&\u0001\u0000\u0000\u0000\u0006,\u0001\u0000\u0000\u0000\b"+
+		"/\u0001\u0000\u0000\u0000\n=\u0001\u0000\u0000\u0000\fA\u0001\u0000\u0000"+
+		"\u0000\u000eI\u0001\u0000\u0000\u0000\u0010\u0011\u0005\u0001\u0000\u0000"+
+		"\u0011\u0012\u0003\u0002\u0001\u0000\u0012\u0013\u0003\u0006\u0003\u0000"+
+		"\u0013\u0014\u0005\u0002\u0000\u0000\u0014\u0001\u0001\u0000\u0000\u0000"+
+		"\u0015\u0016\u0003\u0004\u0002\u0000\u0016\u0017\u0005\t\u0000\u0000\u0017"+
+		"\u0018\u0006\u0001\uffff\uffff\u0000\u0018\u0019\u0005\u0012\u0000\u0000"+
+		"\u0019\u001a\u0006\u0001\uffff\uffff\u0000\u001a\u001c\u0001\u0000\u0000"+
+		"\u0000\u001b\u0015\u0001\u0000\u0000\u0000\u001c\u001f\u0001\u0000\u0000"+
+		"\u0000\u001d\u001b\u0001\u0000\u0000\u0000\u001d\u001e\u0001\u0000\u0000"+
+		"\u0000\u001e\u0003\u0001\u0000\u0000\u0000\u001f\u001d\u0001\u0000\u0000"+
+		"\u0000 !\u0005\u0003\u0000\u0000!\'\u0006\u0002\uffff\uffff\u0000\"#\u0005"+
+		"\u0004\u0000\u0000#\'\u0006\u0002\uffff\uffff\u0000$%\u0005\u0005\u0000"+
+		"\u0000%\'\u0006\u0002\uffff\uffff\u0000& \u0001\u0000\u0000\u0000&\"\u0001"+
+		"\u0000\u0000\u0000&$\u0001\u0000\u0000\u0000\'\u0005\u0001\u0000\u0000"+
+		"\u0000(+\u0003\b\u0004\u0000)+\u0003\u000e\u0007\u0000*(\u0001\u0000\u0000"+
+		"\u0000*)\u0001\u0000\u0000\u0000+.\u0001\u0000\u0000\u0000,*\u0001\u0000"+
+		"\u0000\u0000,-\u0001\u0000\u0000\u0000-\u0007\u0001\u0000\u0000\u0000"+
+		".,\u0001\u0000\u0000\u0000/0\u0005\u0006\u0000\u000001\u0005\u0015\u0000"+
+		"\u000012\u0003\n\u0005\u000023\u0005\u0016\u0000\u000034\u0005\u0013\u0000"+
+		"\u000045\u0003\u0006\u0003\u00005;\u0005\u0014\u0000\u000067\u0005\u0007"+
+		"\u0000\u000078\u0005\u0013\u0000\u000089\u0003\u0006\u0003\u00009:\u0005"+
+		"\u0014\u0000\u0000:<\u0001\u0000\u0000\u0000;6\u0001\u0000\u0000\u0000"+
+		";<\u0001\u0000\u0000\u0000<\t\u0001\u0000\u0000\u0000=>\u0007\u0000\u0000"+
+		"\u0000>?\u0005\r\u0000\u0000?@\u0007\u0000\u0000\u0000@\u000b\u0001\u0000"+
+		"\u0000\u0000AB\u0005\b\u0000\u0000BC\u0005\u0015\u0000\u0000CD\u0003\n"+
+		"\u0005\u0000DE\u0005\u0016\u0000\u0000EF\u0005\u0013\u0000\u0000FG\u0003"+
+		"\u0006\u0003\u0000GH\u0005\u0014\u0000\u0000H\r\u0001\u0000\u0000\u0000"+
+		"IJ\u0005\t\u0000\u0000JK\u0006\u0007\uffff\uffff\u0000KL\u0005\u0012\u0000"+
+		"\u0000L\u000f\u0001\u0000\u0000\u0000\u0005\u001d&*,;";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

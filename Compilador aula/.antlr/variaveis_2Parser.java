@@ -1,4 +1,4 @@
-// Generated from c:/Users/Nicolas Ferreira/Documents/Compilador aula/variaveis_2.g4 by ANTLR 4.13.1
+// Generated from c:/Users/Nicolas Ferreira/Documents/antlr/compilador-A3/Compilador aula/variaveis_2.g4 by ANTLR 4.13.1
 
     import java.util.*;
 
