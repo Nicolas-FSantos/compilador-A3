@@ -1,4 +1,4 @@
-// Generated from c:/Users/Nicolas Ferreira/Documents/antlr/compilador-A3/Compilador aula/variaveis_2.g4 by ANTLR 4.13.1
+// Generated from c:/Users/Nicolas Ferreira/Documents/antlr/compilador-A3/Compilador aula/variaveis_2 (1).g4 by ANTLR 4.13.1
 
     import java.util.*;
 
@@ -99,7 +99,7 @@ public class variaveis_2Lexer extends Lexer {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "variaveis_2.g4"; }
+	public String getGrammarFileName() { return "variaveis_2 (1).g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }

@@ -21,7 +21,8 @@ declaracao:    (tipo ID PV)*
 tipo:   (
             'natural'|
             'texto'|
-            'decimal'   
+            'decimal'|
+			'boleano'   
         )
    ;
 
@@ -35,66 +36,79 @@ comando:   ler |
 		   repetwhile |
 		   atribuicao
    ;
-
+//scanner
 ler:   'leia' ABREP ID FP PV
    ;
 
-escrever:   'escreva' ABREP (ID | STRING) FP PV
+//print
+escrever:  'escreva' ABREP (ID | STRING) FP PV
    ;
 
-condicional:   'se' ABREP comp FP AC bloco FC
+condicional:   'se' ABREP compare FP AC bloco FC
 
 		('senao' AC bloco FC )?
    ;
 
-comp:   (ID | NUM | DEC) OPREL (ID | NUM | DEC)
+compare:   (ID | INT | DEC) OPREL (ID | INT | DEC)
    ;
 
-repetfor:  'para' ABREP atribuicao PV comp PV atribuicao FP AC bloco FC
+repetfor:  'para' ABREP atribuicao PV compare PV atribuicao FP AC bloco FC
 
    ;
 
-repetwhile:  'enquanto' ABREP comp FP AC bloco FC
+repetwhile:  'enquanto' ABREP compare FP AC bloco FC
    ;
 
-atribuicao:  ID Op_atrib (ID | NUM | DEC) PV
+atribuicao:  ID Op_atrib (ID | INT | DEC) PV
 
-		{	
-			nome = $ID.text;
-			if(!cv.jaExiste(nome)){
-				System.err.println("A variavel "+nome+" nao foi declarada");
-				System.exit(0);
-			}
-			else{
-				escopo = cv.getEscopo(nome);
-				tipo = cv.getTipo(nome);
-				if(tipo == 1){
-					codigoJava += "int "+nome+" = "+$ID.text+";\n";
-				}
-				else if(tipo == 2){
-					codigoJava += "String "+nome+" = "+$ID.text+";\n";
-				}
-				else if(tipo == 3){
-					codigoJava += "double "+nome+" = "+$ID.text+";\n";
-				}
-			}
-		}
+
+   ;
+
+
+expressao: termo ((SOMA | SUB) termo)*
+   ;
+
+termo: fator ((MULT | DIV) fator)*
+   ;	
+
+fator:   ID | INT | DEC | (ABREP expressao FP)
    ;
 
 
 
 
+//atratamento semântico da atribuição
+// 		{	
+// 			nome = $ID.text;
+// 			if(!cv.jaExiste(nome)){
+// 				System.err.println("A variavel "+nome+" nao foi declarada");
+// 				System.exit(0);
+// 			}
+// 			else{
+// 				escopo = cv.getEscopo(nome);
+// 				tipo = cv.getTipo(nome);
+// 				if(tipo == 1){
+// 					codigoJava += "int "+nome+" = "+$ID.text+";\n";
+// 				}
+// 				else if(tipo == 2){
+// 					codigoJava += "String "+nome+" = "+$ID.text+";\n";
+// 				}
+// 				else if(tipo == 3){
+// 					codigoJava += "double "+nome+" = "+$ID.text+";\n";
+// 				}
+// 			}
+// 		}
 
 
 
-// cond:   'se' ABREP comp FP AC bloco FC
+// cond:   'se' ABREP compare FP AC bloco FC
 // 		('senao' AC bloco FC )?
 // 	;
 
-// comp:   (ID | NUM) OPREL (ID | NUM)
+// compare:   (ID | INT) OPREL (ID | INT)
 //     ;
 
-// repet:  'enquanto' ABREP comp FP AC bloco FC
+// repet:  'enquanto' ABREP compare FP AC bloco FC
 // 	;
 	
 // atrib:  ID {	boolean resultado = cv.jaExiste($ID.text);
@@ -106,19 +120,26 @@ atribuicao:  ID Op_atrib (ID | NUM | DEC) PV
 // 		PV
 //      ;
 
-ID: [A-Za-z]+;
-NUM: [0-9]+;
+ID: [A-Za-z_][A-Za-z0-9_]*;
+INT: [0-9]+;
 DEC: [0-9]+ '.' [0-9]+;
+BOOL: 'true' | 'false';
 STRING: '"' .*? '"' ;
+
 OPREL: '>' | '<' | '>=' | '<=' | '==' | '!=' ;
+
 SOMA: '+' ;
 SUB: '-' ;
 MULT: '*' ;
 DIV: '/' ;
+
 PV: ';' ;
+
 AC: '{' ;
 FC: '}' ;
+
 ABREP: '(' ;
 FP: ')' ;
+
 Op_atrib: '=';
 WS: [ \t\r\n]+ -> skip;
