@@ -39,7 +39,7 @@ declaracao:    (
                         }
                         codigoJava += $ID.text;
                      }
-                  PV {codigoJava += ";\n";}
+                  PV {codigoJava += ";\n\t";}
                )*
     ;
 
@@ -73,7 +73,9 @@ comando: ler |
 		   atribuicao
    ;
 //scanner
-ler: 'leia' 
+ler: 'leia' {
+               codigoJava += "Scanner leia = new Scanner(System.in);\n\t\t";
+            }
       ABREP 
       ID 
       FP 
@@ -135,7 +137,7 @@ escrever:  {codigoJava += "\t\t";}'escreva' {
                 }
    ;
 
-condicional:   'se'
+condicional:   'se' //'se' ABREP compare FP AC bloco FC
                 ABREP{
                   codigoJava += "if (";
                 }
@@ -165,7 +167,7 @@ condicional:   'se'
                          )?
    ;
 
-compare:   (
+compare:   ( //(ID | INT) OPREL (ID | INT)
                ID{
                   boolean resultado = cv.jaExiste($ID.text);
                   if(!resultado){
@@ -225,18 +227,19 @@ compare:   (
                  )
    ;
 
-repetfor:  'para' {
-                     codigoJava += "for";
+repetfor:  'para'   // 'para' ABREP atribuicao PV compare PV atribuicao FP AC bloco FC
+                  {        
+                     codigoJava += "for ";
                   }
              ABREP{
                codigoJava += "(";
              }
               atribuicao
-               PV{codigoJava += ";\n";}
+               PV{codigoJava += ";";}
                 compare
-                 PV{codigoJava += ";\n";}
-                  atribuicao
-                   FP{codigoJava += ")\n";}
+                 PV{codigoJava += ";";}
+                  incremento
+                   FP{codigoJava += ")";}
                     AC{codigoJava += $AC.text+"\n";}
                      bloco
                       FC{codigoJava += $FC.text+"\n";}
@@ -263,7 +266,7 @@ repetwhile:  'enquanto'
    ;
 
 atribuicao:  ID {
-                  String nome = (((AtribuicaoContext)_localctx).ID != null ? ((AtribuicaoContext)_localctx).ID.getText() : null);
+                  String nome = $ID.text;
                   boolean resultado;
                   resultado = cv.jaExiste(nome);
 
@@ -307,6 +310,26 @@ atribuicao:  ID {
                   {codigoJava += ";\n";}
                }
    ;
+
+incremento:
+            ID {
+                  String nome = $ID.text;
+                  boolean resultado;
+                  resultado = cv.jaExiste(nome);
+
+                  if(!resultado){
+                     System.err.println("A variavel "+$ID.text+" nao foi declarada");
+                     System.exit(0);
+                  } else {
+                     var1 = novaVariavel.getTipo();
+                     codigoJava += $ID.text;
+                  }
+               }
+            INCREMENTAL
+            PV {
+                  {codigoJava += ";\n";}
+               }
+;
 
 expressao: termo
           (
@@ -422,12 +445,16 @@ STRING: '"' .*? '"' ;
 
 OPREL: '>' | '<' | '>=' | '<=' | '==' | '!=' ;
 
+INCREMENTAL: '++' | '--' | '+=' | '-=' | '*=' | '/=' ;
+
 SOMA: '+' ;
 SUB: '-' ;
 MULT: '*' ;
 DIV: '/' ;
 
 PV: ';' ;
+
+VG: ',' ;
 
 AC: '{' ;
 FC: '}' ;

@@ -1,7 +1,26 @@
 inicio
 	natural a;
 	decimal b;
+	natural c;
+	natural d;
+	natural e;
+
+	a = 2;
+	c = 2;
+
 	b = 2.0;
 	
 	escreva(b);
+
+	leia(d)
+
+	se(a==c){
+		escreva("Igual");
+	}senao{
+		escreva("Diferente");
+	}
+	
+	para (e=1;e<=10;
+	
+
 fim
