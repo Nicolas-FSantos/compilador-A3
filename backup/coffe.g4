@@ -7,6 +7,7 @@ grammar coffe;
 @members {
 	Variavel novaVariavel = new Variavel();
 	ControleVariavel cv = new ControleVariavel();
+   Conversor cj = new Conversor();
 	String codigoJava = "";
 	int escopo;
 	int tipo;
@@ -105,12 +106,8 @@ ler: 'leia'
    ;
 
 //print
-escrever:  'escreva' {
-                        codigoJava += "System.out.println";
-                     }
-            ABREP {
-                     codigoJava += "(";
-                  }
+escrever:  'escreva' 
+            ABREP
             (
                ID {
                      boolean resultado = cv.jaExiste($ID.text);
@@ -119,27 +116,25 @@ escrever:  'escreva' {
                         System.exit(0);
                      }
                      else{
-                        escopo = novaVariavel.getEscopo();
-                        tipo = novaVariavel.getTipo();
+                        escopo = cv.getEscopo($ID.text);
+                        tipo = cv.getTipo($ID.text);
                         if(tipo == 1){
-                           codigoJava += "+$ID.text+";
+                           codigoJava += "System.out.println("+$ID.text+");\n";
                         }
                         else if(tipo == 2){
-                           codigoJava += "+$ID.text+";
+                           codigoJava += "System.out.println("+$ID.text+");\n";
                         }
                         else if(tipo == 3){
-                           codigoJava += "+$ID.text+";
+                           codigoJava += "System.out.println("+$ID.text+");\n";
                         }
                      }
                   }|
                
                 | STRING{
-                     codigoJava += ""+$STRING.text+"";
+                     codigoJava += "System.out.println("+$STRING.text+");\n";
                 }
                 ) 
-                FP {
-                  codigoJava += ")";
-                }
+                FP 
                 PV{
                   codigoJava += ";\n";
                 }
@@ -147,11 +142,11 @@ escrever:  'escreva' {
 
 condicional:   'se'
                 ABREP{
-                  codigoJava += "if (";
+                  codigoJava += "if";
                 }
                 compare
                  FP{
-                  codigoJava += ")\n";
+                  codigoJava += "\n";
                  }
                 AC{
                   codigoJava += $AC.text+"\n"; 
@@ -162,9 +157,7 @@ condicional:   'se'
                  }
                  
                   (
-                     'senao' {
-                        codigoJava += "else\n";
-                     }
+                     'senao'
                       AC{
                         codigoJava += $AC.text+"\n";
                       }
@@ -183,8 +176,8 @@ compare:   (
                      System.exit(0);
                   }
                   else{
-                     escopo = novaVariavel.getEscopo();
-                     tipo = novaVariavel.getTipo();
+                     escopo = cv.getEscopo($ID.text);
+                     tipo = cv.getTipo($ID.text);
                      if(tipo == 1){
                         codigoJava += $ID.text;
                      }
@@ -212,8 +205,8 @@ compare:   (
                         System.exit(0);
                      }
                      else{
-                        escopo = novaVariavel.getEscopo();
-                        tipo = novaVariavel.getTipo();
+                        escopo = cv.getEscopo($ID.text);
+                        tipo = cv.getTipo($ID.text);
                         if(tipo == 1){
                            codigoJava += $ID.text;
                         }
@@ -235,18 +228,16 @@ compare:   (
                  )
    ;
 
-repetfor:  'para' {
-                     codigoJava += "for";
-                  }
+repetfor:  'para'
              ABREP{
-               codigoJava += "(";
+               codigoJava += "for";
              }
               atribuicao
                PV{codigoJava += ";\n";}
                 compare
                  PV{codigoJava += ";\n";}
                   atribuicao
-                   FP{codigoJava += ")\n";}
+                   FP{codigoJava += "\n";}
                     AC{codigoJava += $AC.text+"\n";}
                      bloco
                       FC{codigoJava += $FC.text+"\n";}
@@ -272,51 +263,50 @@ repetwhile:  'enquanto'
                    }
    ;
 
-atribuicao:  ID {
-                  String nome = (((AtribuicaoContext)_localctx).ID != null ? ((AtribuicaoContext)_localctx).ID.getText() : null);
-                  boolean resultado;
-                  resultado = cv.jaExiste(nome);
-
+atribuicao:  ID{ boolean resultado = cv.jaExiste($ID.text);
                   if(!resultado){
                      System.err.println("A variavel "+$ID.text+" nao foi declarada");
                      System.exit(0);
-                  } else {
-                     var1 = novaVariavel.getTipo();
+                  }else{
+                     var1 = cv.getTipo($ID.text);
                      codigoJava += $ID.text;
                   }
+
                }
              Op_atrib
             (
-               ID {  
-                    resultado = cv.jaExiste(nome);
+               ID {
+                     boolean resultado = cv.jaExiste($ID.text);
                      if(!resultado){
                         System.err.println("A variavel "+$ID.text+" nao foi declarada");
                         System.exit(0);
-                     } else {
-                        var2 = novaVariavel.getTipo();
+                     }
+
+                     else{
+                        var2 = cv.getTipo($ID.text);
                         if(var1 != var2){
                            System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo");
                            System.exit(0);
                         }
                      }
-               } | 
-               INT {  
-                        if(var1 != 1){
+               }| 
+               INT{  if(var1 != 1){
                            System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo");
                            System.exit(0);
                         }
                   } | 
-               DEC {  
-                           if(var1 != 3){
+               DEC{
+                     if(var1 != 3){
                            System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo");
                            System.exit(0);
                         }
                   }
                ) 
-               PV {
+               PV{
                   {codigoJava += ";\n";}
                }
    ;
+
 
 expressao: termo
           (
@@ -348,15 +338,14 @@ termo: fator (
    ;	
 
 fator:   ID{
-            boolean resultado;
-            resultado = cv.jaExiste($ID.text);
+            boolean resultado = cv.jaExiste($ID.text);
             if(!resultado){
                System.err.println("A variavel "+$ID.text+" nao foi declarada");
                System.exit(0);
             }
             else{
-               escopo = novaVariavel.getEscopo();
-               tipo = novaVariavel.getTipo();
+               escopo = cv.getEscopo($ID.text);
+               tipo = cv.getTipo($ID.text);
                if(tipo == 1){
                   codigoJava += $ID.text;
                }

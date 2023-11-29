@@ -1,7 +1,7 @@
 inicio
 	natural a;
 	decimal b;
-	se (a > b){
-		b;
-	}
+	b = 2.0;
+	
+	escreva(b);
 fim
