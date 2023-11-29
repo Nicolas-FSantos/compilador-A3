@@ -105,7 +105,7 @@ ler: 'leia'
    ;
 
 //print
-escrever:  'escreva' {
+escrever:  {codigoJava += "\t\t";}'escreva' {
                         codigoJava += "System.out.println";
                      }
             ABREP {
@@ -119,17 +119,7 @@ escrever:  'escreva' {
                         System.exit(0);
                      }
                      else{
-                        escopo = novaVariavel.getEscopo();
-                        tipo = novaVariavel.getTipo();
-                        if(tipo == 1){
-                           codigoJava += "+$ID.text+";
-                        }
-                        else if(tipo == 2){
-                           codigoJava += "+$ID.text+";
-                        }
-                        else if(tipo == 3){
-                           codigoJava += "+$ID.text+";
-                        }
+                        codigoJava += $ID.text;
                      }
                   }|
                
