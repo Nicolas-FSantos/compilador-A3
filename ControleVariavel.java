@@ -45,4 +45,13 @@ public class ControleVariavel {
         }
             
     }
+
+    public int getTipo(String nome) {
+        for(int i=contvar.size()-1; i>=0; i--){
+            if(contvar.get(i).getNome().equals(nome))
+                return contvar.get(i).getTipo();
+        }
+        return -1;
+    }
+
 }

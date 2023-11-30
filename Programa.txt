@@ -1,26 +1,26 @@
 inicio
-	natural a;
-	decimal b;
-	natural c;
-	natural d;
-	natural e;
+	nat a;
+	nat c;
+	nat d;
+	nat e;
+	texto f;
 
-	a = 2;
-	c = 2;
+	a = 2 ;
+	c = 2 ;
+	f = "ulife";
 
-	b = 2.0;
+	escreva(a);
+	leia(d);
 	
-	escreva(b);
-
-	leia(d)
-
 	se(a==c){
-		escreva("Igual");
+		escreva("Ulife2");
 	}senao{
-		escreva("Diferente");
+		escreva("Ulife3");
 	}
-	
-	para (e=1;e<=10;
-	
+
+	enquanto(a==c){
+		escreva("Ulife4");
+		a++;
+	}
 
 fim

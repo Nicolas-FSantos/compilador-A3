@@ -12,6 +12,10 @@ grammar coffe;
 	int tipo;
 	String nome;
    Scanner leia = new Scanner(System.in);
+   boolean resultado;
+
+   int valor1;
+   int valor2;
 
    int var1;
    int var2;
@@ -39,15 +43,16 @@ declaracao:    (
                         }
                         codigoJava += $ID.text;
                      }
-                  PV {codigoJava += ";\n\t";}
-               )*
+                  
+                  PV {codigoJava += ";\n\t\t";}
+               )*(WS)*
     ;
 
 tipo:   (
-            'natural'{ tipo = 1; 
+            'nat'{ tipo = 1; 
                         codigoJava += "int ";
                      }|
-            'texto'  {
+            'texto'{
                         tipo = 2;
                         codigoJava += "String ";
                      }|
@@ -70,7 +75,11 @@ comando: ler |
 		   condicional |
 		   repetfor |
 		   repetwhile |
-		   atribuicao
+		   atribuicao |
+         incremento |
+         expressao 
+
+
    ;
 //scanner
 ler: 'leia' {
@@ -89,17 +98,17 @@ ler: 'leia' {
                      case 1:
                         codigoJava += $ID.text+" = ";
                         codigoJava += "leia.nextInt()";
-                        codigoJava += ";\n";
+                        codigoJava += ";\n\t\t";
                         break;
                     case 2:
                         codigoJava += $ID.text+" = ";
                         codigoJava += "leia.nextLine()";
-                        codigoJava += ";\n";
+                        codigoJava += ";\n\t\t";
                         break;
                    case 3:
                         codigoJava += $ID.text+" = ";
                         codigoJava += "leia.nextFloat()";
-                        codigoJava += ";\n";
+                        codigoJava += ";\n\t\t";
                         break;
                   }
                }
@@ -107,7 +116,8 @@ ler: 'leia' {
    ;
 
 //print
-escrever:  {codigoJava += "\t\t";}'escreva' {
+escrever:  'escreva' // 'print' ABREP (ID | STRING) FP PV
+                     {
                         codigoJava += "System.out.println";
                      }
             ABREP {
@@ -133,32 +143,34 @@ escrever:  {codigoJava += "\t\t";}'escreva' {
                   codigoJava += ")";
                 }
                 PV{
-                  codigoJava += ";\n";
+                  codigoJava += ";\n\t\t";
                 }
    ;
 
-condicional:   'se' //'se' ABREP compare FP AC bloco FC
+condicional:   'se' {
+                        codigoJava += "if";
+                     }
                 ABREP{
-                  codigoJava += "if (";
+                  codigoJava += "(";
                 }
                 compare
                  FP{
-                  codigoJava += ")\n";
+                  codigoJava += ")";
                  }
                 AC{
-                  codigoJava += $AC.text+"\n"; 
+                  codigoJava += $AC.text+"\n\t\t\t"; 
                 }
                  bloco 
                  FC{
-                  codigoJava += $FC.text+"\n";
+                  codigoJava += $FC.text;
                  }
                  
                   (
                      'senao' {
-                        codigoJava += "else\n";
+                        codigoJava += "else";
                      }
                       AC{
-                        codigoJava += $AC.text+"\n";
+                        codigoJava += $AC.text+"\n\t\t\t";
                       }
                        bloco
                         FC{
@@ -169,24 +181,28 @@ condicional:   'se' //'se' ABREP compare FP AC bloco FC
 
 compare:   ( //(ID | INT) OPREL (ID | INT)
                ID{
-                  boolean resultado = cv.jaExiste($ID.text);
+                  nome = $ID.text;
+                  boolean resultado = cv.jaExiste(nome);
+                  tipo = cv.getTipo(nome);
                   if(!resultado){
                      System.err.println("A variavel "+$ID.text+" nao foi declarada");
                      System.exit(0);
                   }
-                  else{
-                     escopo = novaVariavel.getEscopo();
-                     tipo = novaVariavel.getTipo();
+                  else{      
                      if(tipo == 1){
                         codigoJava += $ID.text;
+                        valor1 = 1;
                      }
                      else if(tipo == 2){
                         codigoJava += $ID.text;
+                        valor1 = 2;
                      }
                      else if(tipo == 3){
                         codigoJava += $ID.text;
+                        valor1 = 3;
                      }
                   }
+                  
                }|
                 INT{
                   codigoJava += $INT.text;
@@ -198,22 +214,26 @@ compare:   ( //(ID | INT) OPREL (ID | INT)
                   codigoJava += $OPREL.text;
                 }
                  (ID{
-                     boolean resultado = cv.jaExiste($ID.text);
+                     nome = $ID.text;
+                     boolean resultado = cv.jaExiste(nome);
+                     tipo = cv.getTipo(nome);
                      if(!resultado){
                         System.err.println("A variavel "+$ID.text+" nao foi declarada");
                         System.exit(0);
                      }
                      else{
-                        escopo = novaVariavel.getEscopo();
                         tipo = novaVariavel.getTipo();
                         if(tipo == 1){
                            codigoJava += $ID.text;
+                           valor2 = 1;
                         }
                         else if(tipo == 2){
                            codigoJava += $ID.text;
+                           valor2 = 2;
                         }
                         else if(tipo == 3){
                            codigoJava += $ID.text;
+                           valor2 = 3;
                         }
                      }
                   
@@ -223,91 +243,133 @@ compare:   ( //(ID | INT) OPREL (ID | INT)
                  } | 
                  DEC{
                   codigoJava += $DEC.text;
+                 }{
+                     if(valor1 != valor2){
+                        System.err.println("As variaveis nao sao do mesmo tipo");
+                        System.exit(0);
+                     }
                  }
                  )
    ;
 
-repetfor:  'para'   // 'para' ABREP atribuicao PV compare PV atribuicao FP AC bloco FC
+repetfor:  'para'   // 'para' ABREP atribuicao PV compare PV incremento FP AC bloco FC
                   {        
                      codigoJava += "for ";
                   }
-             ABREP{
-               codigoJava += "(";
-             }
-              atribuicao
-               PV{codigoJava += ";";}
-                compare
-                 PV{codigoJava += ";";}
-                  incremento
-                   FP{codigoJava += ")";}
-                    AC{codigoJava += $AC.text+"\n";}
-                     bloco
-                      FC{codigoJava += $FC.text+"\n";}
-
-   ;
-
-repetwhile:  'enquanto'
-                ABREP{
-                  codigoJava += "while(";
-                }
-                 compare
-                  FP{
-                     codigoJava += ")\n";
+            ABREP {
+                     codigoJava += "(";
                   }
-                   
-                   AC{
-                     codigoJava += $AC.text+"\n";
-                   }
-                    bloco
-                     FC{
-                        codigoJava += $FC.text+"\n";
-                     
-                   }
+
+            atribuicao
+
+            PV{codigoJava += ";";}
+
+            compare
+
+            PV{codigoJava += ";";}
+
+            incremento
+
+            FP{codigoJava += ")";}
+
+            AC{codigoJava += $AC.text+"\n";}
+
+            bloco
+
+            FC{codigoJava += $FC.text+"\n";}
+
    ;
 
-atribuicao:  ID {
-                  String nome = $ID.text;
+repetwhile:  'enquanto' // 'enquanto' ABREP compare FP AC bloco FC
+                        {
+                           codigoJava += "while ";
+                        }
+            ABREP {
+                     codigoJava += "(";
+                  }
+
+            compare
+
+            FP {
+                  codigoJava += ")\n";
+               }
+                   
+            AC {
+                  codigoJava += $AC.text+"\n";
+
+               }
+
+            bloco
+
+            FC {
+                  codigoJava += $FC.text+"\n";
+                     
+               }
+   ;
+
+atribuicao:  ID //ID Op_atrib (ID | INT | DEC | STRING) PV
+               {
+                  nome = $ID.text;
                   boolean resultado;
                   resultado = cv.jaExiste(nome);
+                  tipo = cv.getTipo(nome);
 
                   if(!resultado){
-                     System.err.println("A variavel "+$ID.text+" nao foi declarada");
+                     System.out.println(tipo);
+                     System.err.println("A variavel "+$ID.text+" nao foi declarada test1");
                      System.exit(0);
                   } else {
-                     var1 = novaVariavel.getTipo();
+                     var1 = tipo;
                      codigoJava += $ID.text;
                   }
                }
-             Op_atrib
+             Op_atrib {
+                        codigoJava += $Op_atrib.text;
+                     }  
             (
                ID {  
-                    resultado = cv.jaExiste(nome);
+                     nome = $ID.text;
+                     resultado = cv.jaExiste(nome);
                      if(!resultado){
-                        System.err.println("A variavel "+$ID.text+" nao foi declarada");
+                        System.err.println("A variavel "+$ID.text+" nao foi declarada test2");
                         System.exit(0);
                      } else {
                         var2 = novaVariavel.getTipo();
                         if(var1 != var2){
-                           System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo");
+                           System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo test3");
                            System.exit(0);
                         }
+                        codigoJava += $ID.text;
                      }
                } | 
                INT {  
                         if(var1 != 1){
-                           System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo");
+                           System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo test4");
                            System.exit(0);
+                        }else{
+                           codigoJava += $INT.text;
                         }
+
                   } | 
                DEC {  
-                           if(var1 != 3){
-                           System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo");
+                        if(var1 != 3){
+                           System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo test5");
                            System.exit(0);
+                        }else{
+                           codigoJava += $DEC.text;
                         }
-                  }
-               ) 
+                  } |
+               STRING {  
+                        if(var1 != 2){
+                           System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo test6");
+                           System.exit(0);
+                        }else{
+                           codigoJava += $STRING.text;
+                        }
+                  } 
+               )* 
                PV {
-                  {codigoJava += ";\n";}
+                  {codigoJava += ";\n\t\t";}
                }
    ;
 
@@ -325,11 +387,15 @@ incremento:
                      codigoJava += $ID.text;
                   }
                }
-            INCREMENTAL
+            INCREMENTAL {
+                           codigoJava += $INCREMENTAL.text;
+                        }
             PV {
                   {codigoJava += ";\n";}
                }
 ;
+
+
 
 expressao: termo
           (
@@ -391,51 +457,6 @@ fator:   ID{
          (ABREP expressao FP)
    ;
 
-
-
-
-//atratamento semântico da atribuição
-// 		{	
-// 			nome = $ID.text;
-// 			if(!cv.jaExiste(nome)){
-// 				System.err.println("A variavel "+nome+" nao foi declarada");
-// 				System.exit(0);
-// 			}
-// 			else{
-// 				escopo = cv.getEscopo(nome);
-// 				tipo = cv.getTipo(nome);
-// 				if(tipo == 1){
-// 					codigoJava += "int "+nome+" = "+$ID.text+";\n";
-// 				}
-// 				else if(tipo == 2){
-// 					codigoJava += "String "+nome+" = "+$ID.text+";\n";
-// 				}
-// 				else if(tipo == 3){
-// 					codigoJava += "double "+nome+" = "+$ID.text+";\n";
-// 				}
-// 			}
-// 		}
-
-
-
-// cond:   'se' ABREP compare FP AC bloco FC
-// 		('senao' AC bloco FC )?
-// 	;
-
-// compare:   (ID | INT) OPREL (ID | INT)
-//     ;
-
-// repet:  'enquanto' ABREP compare FP AC bloco FC
-// 	;
-	
-// atrib:  ID {	boolean resultado = cv.jaExiste($ID.text);
-// 				if(!resultado){
-// 					System.err.println("A variavel "+$ID.text+" nao foi declarada");
-// 					System.exit(0);
-// 				}
-// 			}
-// 		PV
-//      ;
 
 ID: [A-Za-z_][A-Za-z0-9_]*;
 INT: [0-9]+;
