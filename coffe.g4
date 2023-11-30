@@ -34,6 +34,9 @@ prog:  { escopo = 0;
    ;
 
 declaracao:    (
+                  {
+                     codigoJava += "public ";
+                  }
                   tipo 
                   ID { novaVariavel = new Variavel($ID.text, tipo, escopo);
                               boolean declarado = cv.adiciona(novaVariavel);
@@ -45,7 +48,7 @@ declaracao:    (
                      }
                   
                   PV {codigoJava += ";\n\t\t";}
-               )*(WS)*
+               )*
     ;
 
 tipo:   (
@@ -174,7 +177,7 @@ condicional:   'se' {
                       }
                        bloco
                         FC{
-                           codigoJava += $FC.text+"\n";
+                           codigoJava += $FC.text+"\n\t\t";
                         }
                          )?
    ;
@@ -260,7 +263,7 @@ repetfor:  'para'   // 'para' ABREP atribuicao PV compare PV incremento FP AC bl
                      codigoJava += "(";
                   }
 
-            atribuicao
+            declfor{}
 
             PV{codigoJava += ";";}
 
@@ -268,7 +271,7 @@ repetfor:  'para'   // 'para' ABREP atribuicao PV compare PV incremento FP AC bl
 
             PV{codigoJava += ";";}
 
-            incremento
+            increfor
 
             FP{codigoJava += ")";}
 
@@ -291,18 +294,20 @@ repetwhile:  'enquanto' // 'enquanto' ABREP compare FP AC bloco FC
             compare
 
             FP {
-                  codigoJava += ")\n";
+                  codigoJava += ")";
                }
                    
             AC {
-                  codigoJava += $AC.text+"\n";
+                  codigoJava += $AC.text+"\n\t\t\t";
 
                }
 
-            bloco
+            bloco{
+                  codigoJava += "\t\t\t";
+            }
 
             FC {
-                  codigoJava += $FC.text+"\n";
+                  codigoJava += $FC.text+"\n\t\t";
                      
                }
    ;
@@ -330,11 +335,12 @@ atribuicao:  ID //ID Op_atrib (ID | INT | DEC | STRING) PV
                ID {  
                      nome = $ID.text;
                      resultado = cv.jaExiste(nome);
+                     tipo = cv.getTipo(nome);
                      if(!resultado){
                         System.err.println("A variavel "+$ID.text+" nao foi declarada test2");
                         System.exit(0);
                      } else {
-                        var2 = novaVariavel.getTipo();
+                        var2 = tipo;
                         if(var1 != var2){
                            System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo test3");
                            System.exit(0);
@@ -373,6 +379,25 @@ atribuicao:  ID //ID Op_atrib (ID | INT | DEC | STRING) PV
                }
    ;
 
+declfor:
+            'nat'
+            ID{
+               novaVariavel = new Variavel($ID.text, 1, escopo);
+               boolean declarado = cv.adiciona(novaVariavel);
+               if(!declarado){
+                  System.err.println("Variavel "+$ID.text+" ja foi declarada!!!");
+                  System.exit(0);
+               }
+               codigoJava += "int "+$ID.text;
+            }
+            Op_atrib{
+               codigoJava += $Op_atrib.text;
+            }
+            INT{
+               codigoJava += $INT.text;
+            }
+;
+
 incremento:
             ID {
                   String nome = $ID.text;
@@ -390,11 +415,31 @@ incremento:
             INCREMENTAL {
                            codigoJava += $INCREMENTAL.text;
                         }
-            PV {
-                  {codigoJava += ";\n";}
-               }
+
+            PV{
+               codigoJava += ";\n";
+            }
+
 ;
 
+increfor:
+          ID {
+                  String nome = $ID.text;
+                  boolean resultado;
+                  resultado = cv.jaExiste(nome);
+
+                  if(!resultado){
+                     System.err.println("A variavel "+$ID.text+" nao foi declarada");
+                     System.exit(0);
+                  } else {
+                     var1 = novaVariavel.getTipo();
+                     codigoJava += $ID.text;
+                  }
+               }
+            INCREMENTAL {
+                           codigoJava += $INCREMENTAL.text;
+                        }
+;
 
 
 expressao: termo
@@ -426,7 +471,8 @@ termo: fator (
             )*
    ;	
 
-fator:   ID{
+fator:   ID //ID | INT | DEC | BOOL | STRING | ABREP expressao FP
+            {
             boolean resultado;
             resultado = cv.jaExiste($ID.text);
             if(!resultado){
@@ -440,7 +486,7 @@ fator:   ID{
                   codigoJava += $ID.text;
                }
                else if(tipo == 2){
-                  codigoJava += $ID.text;
+                  System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo");
                }
                else if(tipo == 3){
                   codigoJava += $ID.text;
@@ -454,7 +500,14 @@ fator:   ID{
             codigoJava += $DEC.text;
          }| 
 
-         (ABREP expressao FP)
+         (ABREP {
+                  codigoJava += "(";
+         }
+         expressao {
+                  codigoJava += $expressao.text;
+         }
+         FP{codigoJava += $FP.text;}
+         )
    ;
 
 

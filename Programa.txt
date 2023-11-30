@@ -6,8 +6,10 @@ inicio
 	texto f;
 
 	a = 2 ;
-	c = 2 ;
+	c = 0 ;
 	f = "ulife";
+
+	a = c;
 
 	escreva(a);
 	leia(d);
@@ -21,6 +23,11 @@ inicio
 	enquanto(a==c){
 		escreva("Ulife4");
 		a++;
+	}
+
+	para(nat g=2;e<10;e++){
+		escreva("Ulife4");
+		escreva("Ulife5");
 	}
 
 fim
