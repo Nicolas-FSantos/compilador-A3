@@ -1,7 +1,0 @@
-cd C:\Users\Nicolas Ferreira\Documents\antlr\compilador-A3
-
-java org.antlr.v4.Tool coffe.g4
-
-javac *.java
-
-grun coffe prog Programa.txt

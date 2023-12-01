@@ -1,0 +1,13 @@
+-Para executar o código, acesse o prompt de comando do seu computador e navegue até o diretório onde a gramática está localizada, "compilador-A3" .
+
+-Em seguida, utilize o seguinte comando para gerar os arquivos Parser e Lexer:
+antlr4 coffe.g4
+
+-Caso não funcione, tente:
+java org.antlr.v4.Tool coffe.g4
+
+-Posteriormente, compile todos os arquivos Java presentes na pasta com o seguinte comando:
+javac *.java
+
+-Por fim, execute o código de teste com a seguinte instrução:
+grun coffe prog Programa.txt

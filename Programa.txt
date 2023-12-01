@@ -1,19 +1,24 @@
 inicio
 	nat a;
 	nat c;
-	nat d;
-	nat e;
+	nat x;
+	nat y;
+
 	texto f;
 
 	a = 2 ;
 	c = 0 ;
 	f = "ulife";
 
+	leia(z);
+
+
 	a = c;
 
 	escreva(a);
-	leia(d);
+
 	
+
 	se(a==c){
 		escreva("Ulife2");
 	}senao{
@@ -25,9 +30,10 @@ inicio
 		a++;
 	}
 
-	para(nat g=2;e<10;e++){
+	para(nat g=2;g<10;g++){
 		escreva("Ulife4");
 		escreva("Ulife5");
 	}
-
+	
 fim
+

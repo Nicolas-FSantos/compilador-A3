@@ -34,9 +34,7 @@ prog:  { escopo = 0;
    ;
 
 declaracao:    (
-                  {
-                     codigoJava += "public ";
-                  }
+                  
                   tipo 
                   ID { novaVariavel = new Variavel($ID.text, tipo, escopo);
                               boolean declarado = cv.adiciona(novaVariavel);
@@ -46,6 +44,7 @@ declaracao:    (
                         }
                         codigoJava += $ID.text;
                      }
+               
                   
                   PV {codigoJava += ";\n\t\t";}
                )*
@@ -85,9 +84,9 @@ comando: ler |
 
    ;
 //scanner
-ler: 'leia' {
+ler: 'leia'{
                codigoJava += "Scanner leia = new Scanner(System.in);\n\t\t";
-            }
+} 
       ABREP 
       ID 
       FP 
@@ -99,16 +98,19 @@ ler: 'leia' {
                else{
                   switch(tmp.getTipo()){
                      case 1:
+                        codigoJava += "int ";
                         codigoJava += $ID.text+" = ";
                         codigoJava += "leia.nextInt()";
                         codigoJava += ";\n\t\t";
                         break;
                     case 2:
+                        codigoJava += "String ";
                         codigoJava += $ID.text+" = ";
                         codigoJava += "leia.nextLine()";
                         codigoJava += ";\n\t\t";
                         break;
                    case 3:
+                        codigoJava += "float ";
                         codigoJava += $ID.text+" = ";
                         codigoJava += "leia.nextFloat()";
                         codigoJava += ";\n\t\t";
@@ -204,6 +206,14 @@ compare:   ( //(ID | INT) OPREL (ID | INT)
                         codigoJava += $ID.text;
                         valor1 = 3;
                      }
+                     else if(tipo == 4){
+                        codigoJava += $ID.text;
+                        valor1 = 4;
+                     }
+                     else{
+                        System.err.println("As variaveis nao sao do mesmo tipo");
+                        System.exit(0);
+                     }
                   }
                   
                }|
@@ -212,6 +222,9 @@ compare:   ( //(ID | INT) OPREL (ID | INT)
                 } | 
                 DEC{
                   codigoJava += $DEC.text;
+                }
+                BOOL{
+                  codigoJava += $BOOL.text;
                 }
                 ) OPREL{
                   codigoJava += $OPREL.text;
@@ -237,6 +250,13 @@ compare:   ( //(ID | INT) OPREL (ID | INT)
                         else if(tipo == 3){
                            codigoJava += $ID.text;
                            valor2 = 3;
+                        }
+                        else if(tipo == 4){
+                           codigoJava += $ID.text;
+                           valor2 = 4;
+                        } else {
+                           System.err.println("As variaveis nao sao do mesmo tipo");
+                           System.exit(0);
                         }
                      }
                   
@@ -312,7 +332,7 @@ repetwhile:  'enquanto' // 'enquanto' ABREP compare FP AC bloco FC
                }
    ;
 
-atribuicao:  ID //ID Op_atrib (ID | INT | DEC | STRING) PV
+atribuicao:  ID //id Op_atrib ((expressao)? | ID | )PV
                {
                   nome = $ID.text;
                   boolean resultado;
@@ -328,9 +348,10 @@ atribuicao:  ID //ID Op_atrib (ID | INT | DEC | STRING) PV
                      codigoJava += $ID.text;
                   }
                }
-             Op_atrib {
-                        codigoJava += $Op_atrib.text;
-                     }  
+             Op_atrib{
+                  codigoJava += $Op_atrib.text;
+             } 
+
             (
                ID {  
                      nome = $ID.text;
@@ -372,7 +393,15 @@ atribuicao:  ID //ID Op_atrib (ID | INT | DEC | STRING) PV
                         }else{
                            codigoJava += $STRING.text;
                         }
-                  } 
+                  } |
+               BOOL {  
+                        if(var1 != 4){
+                           System.err.println("A variavel "+$ID.text+" nao é do mesmo tipo test7");
+                           System.exit(0);
+                        }else{
+                           codigoJava += $BOOL.text;
+                        }
+                  }
                )* 
                PV {
                   {codigoJava += ";\n\t\t";}
@@ -441,8 +470,16 @@ increfor:
                         }
 ;
 
+expreinter:
+   expressao
+   PV{
+      codigoJava += ";\n\t\t";
+   }
 
-expressao: termo
+;
+
+
+expressao: termo // termo (SOMA | SUB) termo
           (
             (
                SOMA{
@@ -453,9 +490,11 @@ expressao: termo
                }
             ) 
             termo)*
+
    ;
 
-termo: fator (
+termo: fator // fator (MULT | DIV) fator
+            (
                (
                   MULT{
                      codigoJava += "*";
@@ -469,6 +508,7 @@ termo: fator (
                
             }
             )*
+            
    ;	
 
 fator:   ID //ID | INT | DEC | BOOL | STRING | ABREP expressao FP
@@ -508,13 +548,14 @@ fator:   ID //ID | INT | DEC | BOOL | STRING | ABREP expressao FP
          }
          FP{codigoJava += $FP.text;}
          )
+      
    ;
 
 
-ID: [A-Za-z_][A-Za-z0-9_]*;
+ID : [a-z][a-zA-Z0-9]*;
 INT: [0-9]+;
 DEC: [0-9]+ '.' [0-9]+;
-BOOL: 'true' | 'false';
+BOOL: 'True' | 'False';
 STRING: '"' .*? '"' ;
 
 OPREL: '>' | '<' | '>=' | '<=' | '==' | '!=' ;
